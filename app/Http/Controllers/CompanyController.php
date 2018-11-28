@@ -3,10 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Company;
+use App\Employee;
+use App\Department;
+use Auth;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
+
+    public function showEmployees(){
+      $employees = Employee::where('company_id', Auth::User()->company->id)
+                            ->Paginate(2);
+      $departments = Department::all()->where('company_id', Auth::User()->company->id);
+      return view('employee_index')->with(compact('employees', 'departments'));
+    }
     /**
      * Display a listing of the resource.
      *

@@ -16,14 +16,8 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-      $id = $this->getCompanyId();
-      $departments = Department::all()->where('company_id', $id);
+      $departments = Department::all()->where('company_id', Auth::User()->company->id);
       return view('departments')->with(compact('departments'));
-    }
-
-    public function getCompanyId(){
-      $company = Company::findOrFail(Auth::id());
-      return $company->id;
     }
 
     /**
@@ -82,9 +76,14 @@ class DepartmentController extends Controller
      * @param  \App\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Department $department)
+    public function update(Request $request, $id)
     {
-        //
+        $department = Department::findOrFail($id);
+        $department->name = $request->get('name');
+        $department->description = $request->get('description');
+        $department->save();
+
+        return redirect()->back()->with('updateStatus', 'Department info has been updated Successfully!');
     }
 
     /**

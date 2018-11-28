@@ -25,12 +25,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $currentId = Auth::id();
-        $company = Company::findOrFail($currentId);
+        $company = Company::findOrFail(Auth::User()->company->id);
         return view('home')->with(compact('company'));
-    }
-
-    public function thisId(){
-        return $this->Auth::User()->id;
     }
 }

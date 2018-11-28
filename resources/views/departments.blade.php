@@ -9,8 +9,20 @@
                 @if(session()->get('success'))
                   <div class="alert alert-success">
                     {{ session()->get('success') }}
-                  </div><br />
+                  </div>
+                @elseif(session()->get('updateStatus'))
+                  <div class="alert alert-success">
+                    {{ session()->get('updateStatus') }}
+                  </div>
                 @endif
+                <script>
+                $(document).ready(function() {
+                    // show the alert
+                    $(".alert").fadeTo(2000, 500).slideUp(500, function(){
+                        $(".alert").slideUp(500);
+                    });
+                });
+                </script>
                 <div class="card-body">
                   <p>
                     <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
@@ -50,12 +62,42 @@
                           <td>{{ $department->name }}</td>
                           <td>{{ $department->description }}</td>
                           <td>
-                            <button class="btn btn-primary">Add Employee</button>
+                            <a href="{{ route('employees', $department->id) }}" class="btn btn-primary">View Employees</a>
                           </td>
                           <td>
-                            <button class="btn btn-success">Edit</button>
+                            <button class="btn btn-success" data-toggle="modal" data-target="#update{{$department->id}}">Edit</button>
                             <!-- ............................................................................................................ -->
-
+                            <!-- Modal -->
+                            <div class="modal fade" id="update{{$department->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Update Department</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <form method="post" action="{{ route('updateDepartment', $department->id) }}">
+                                      @csrf
+                                      @method('patch')
+                                      <div class="form-group">
+                                        <label for="name">Department Name</label>
+                                        <input type="text" class="form-control" name="name" id="name" value="{{$department->name}}" required>
+                                      </div>
+                                      <div class="form-group">
+                                        <label for="description">Description</label>
+                                        <input type="text" class="form-control" name="description" id="description" value="{{$department->description}}" required>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                      </div>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                             <!-- ............................................................................................................ -->
                           </td>
                           <td>
